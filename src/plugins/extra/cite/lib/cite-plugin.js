@@ -312,6 +312,12 @@ define([
 		settings: null,
 		sidebar: null,
 		config: ['quote', 'blockquote'],
+		referenceContainerHeader: '<h2>References</h2>',
+		referenceContainerItem: {
+			linkNote: '<a class="external" target="_blank" href="{link}">{link}</a>. {note}',
+			link: '<a class="external" target="_blank" href="{link}">{link}</a>',
+			note: '{note}'
+		},
 
 		init: function () {
 			var plugin = this;
@@ -326,6 +332,26 @@ define([
 
 				if (referenceContainer.length) {
 					plugin.referenceContainer = referenceContainer;
+				}
+
+				var referenceContainerHeader = $(Aloha.settings.plugins.cite.referenceContainerHeader);
+
+				if (referenceContainerHeader.length) {
+					plugin.referenceContainerHeader = referenceContainerHeader;
+				}
+
+				var referenceContainerItem = $(Aloha.settings.plugins.cite.referenceContainerItem);
+
+				if (referenceContainerItem.length) {
+					if (referenceContainerItem[0].linkNote) {
+						plugin.referenceContainerItem.linkNote = referenceContainerItem[0].linkNote;
+					}
+					if (referenceContainerItem[0].link) {
+						plugin.referenceContainerItem.link = referenceContainerItem[0].link;
+					}
+					if (referenceContainerItem[0].note) {
+						plugin.referenceContainerItem.note = referenceContainerItem[0].note;
+					}
 				}
 
 				if (typeof Aloha.settings.plugins.cite !== 'undefined') {
@@ -691,8 +717,11 @@ define([
 			wrapper.append(this.createCiteAnchor(ref, note, index));
 
 			if (0 === this.referenceContainer.find('ol.references').length) {
+				if (this.referenceContainerHeader) {
+					this.referenceContainer
+						.append(this.referenceContainerHeader);
+				}
 				this.referenceContainer
-					.append('<h2>References</h2>')
 					.append('<ol class="references"></ol>');
 			}
 			this.referenceContainer.find('ol.references').append(
@@ -721,10 +750,18 @@ define([
 				$('.aloha-cite-' + uid).attr('cite', link);
 			}
 			if (this.referenceContainer) {
-				$('li#cite-note-' + uid + ' span').html((
-					link ? '<a class="external" target="_blank" href="' + link + '">' + link + '</a>'
-					     : ''
-				) + (note ? '. ' + note : ''));
+				var item = '<a class="external" target="_blank" href="{link}">{note}</a>';
+				if (link && note) {
+					item = this.referenceContainerItem.linkNote;
+				} else if (link) {
+					item = this.referenceContainerItem.link;
+				} else if (note) {
+					item = this.referenceContainerItem.note;
+				}
+				$('li#cite-note-' + uid + ' span').html(supplant(
+					item,
+					{ link: link, note: note }
+				));
 			}
 		},
 
