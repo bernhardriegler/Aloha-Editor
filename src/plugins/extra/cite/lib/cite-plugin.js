@@ -496,6 +496,20 @@ define([
 					Format.multiSplitButton.hideItem('blockquote');
 				}
 			});
+            
+			plugin.initCitations();
+		},
+        
+		initCitations: function () {
+			var plugin = this;
+			$('.aloha-cite-wrapper').each(function(index,item) {
+				var item = $(item);
+				plugin.citations.push({
+					uid   : item.data('cite-id'),
+					link  : item.attr('cite'),
+					notes : item.attr('note')
+				});
+			});
 		},
 
 		/**
@@ -749,6 +763,9 @@ define([
 			if (link) {
 				$('.aloha-cite-' + uid).attr('cite', link);
 			}
+			if (note) {
+				$('.aloha-cite-' + uid).attr('note', note);
+			}
 			if (this.referenceContainer) {
 				var item = '<a class="external" target="_blank" href="{link}">{note}</a>';
 				if (link && note) {
@@ -791,8 +808,8 @@ define([
 						$elem.removeAttr('data-cite-id');
 					}
 				}
-				$elem.removeClass('aloha-cite-wrapper');
 			});
 		}
 	});
 });
+
