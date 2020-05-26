@@ -698,8 +698,7 @@ define([
 				this.referenceContainer.find('ol.references li#' + note).remove();
 
 				if (0 === this.referenceContainer.find('ol.references li').length) {
-					this.referenceContainer.find('h2').remove();
-					this.referenceContainer.find('ol.references').remove();
+					this.referenceContainer.empty();
 				} else {
 					for (var i = index; i < this.citations.length; i++) {
 						var $cite = $('.aloha-editable-active ' + nsSel(this.citations[i].uid));
